@@ -225,7 +225,7 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="67" />
     <option name="y" value="27" />
-    <option name="width" value="821" />
+    <option name="width" value="1148" />
     <option name="height" value="1053" />
   </component>
   <component name="ProjectView">
@@ -289,12 +289,12 @@
       <workItem from="1543481180689" duration="178000" />
       <workItem from="1543482105410" duration="13000" />
       <workItem from="1543482625908" duration="14169000" />
-      <workItem from="1543500524129" duration="580000" />
+      <workItem from="1543500524129" duration="830000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="27070000" />
+    <option name="totallyTimeSpent" value="27320000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -306,10 +306,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="67" y="27" width="821" height="1053" extended-state="0" />
+    <frame x="67" y="27" width="1148" height="1053" extended-state="0" />
     <layout>
       <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.32774192" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.23049001" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info active="true" anchor="bottom" id="Terminal" order="0" visible="true" weight="0.44853738" />
       <window_info anchor="bottom" id="Database Changes" order="1" show_stripe_button="false" />

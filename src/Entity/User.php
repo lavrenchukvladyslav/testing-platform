@@ -2,30 +2,71 @@
 
 namespace App\Entity;
 
-
-
-class Task
+class User
 {
-    protected $task;
-    protected $dueDate;
+    protected $name;
+    protected $secondName;
+    protected $email;
+    protected $password;
+    protected $phone;
+    protected $photo;
+    protected $role;
 
-    public function getTask()
+
+    public function getName()
     {
-        return $this->task;
+        return $this->name;
     }
-
-    public function setTask($task)
+    public function setName($name)
     {
-        $this->task = $task;
+        $this->name = $name;
     }
-
-    public function getDueDate()
+    public function getSecondName()
     {
-        return $this->dueDate;
+        return $this->secondName;
     }
-
-    public function setDueDate(\DateTime $dueDate = null)
+    public function setSecondName($secondName)
     {
-        $this->dueDate = $dueDate;
+        $this->secondName = $secondName;
+    }
+    public function getEmail()
+    {
+        return $this->email;
+    }
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
+    public function getPassword()
+    {
+        return $this->password;
+    }
+    public function setPassword($password)
+    {
+        $this->password = $password;
+    }
+    public function getPhone()
+    {
+        return $this->phone;
+    }
+    public function setPhone($phone)
+    {
+        $this->phone = $phone;
+    }
+    public function getPhoto()
+    {
+        return $this->photo;
+    }
+    public function setPhoto($photo)
+    {
+        $this->photo = $photo;
+    }
+    public function getRole()
+    {
+        return $this->role;
+    }
+    public function setRole($role)
+    {
+        $this->role = $role;
     }
 }

@@ -65,7 +65,7 @@ class User
     public $photo;
 
     public $role;
-    public $emails;
+//    public $emails;
 
     public function getId(): ?int
     {
@@ -127,11 +127,11 @@ class User
         $this->photo = $photo;
         return $this;
     }
-    public function getRole(): ?string
+    public function getRole()
     {
         return $this->role;
     }
-    public function setRole(string $role): self
+    public function setRole($role)
     {
         $this->role = $role;
         return $this;

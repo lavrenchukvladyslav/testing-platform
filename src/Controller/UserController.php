@@ -51,10 +51,10 @@ class UserController extends AbstractController
 //            ->add('save', SubmitType::class, array('label' => 'Create user'))
 //            ->getForm();
         $form->handleRequest($request);
-//        dump($form->getData());
+        dump($form->getData());
 //
         return $this->render('user/registration.html.twig', array(
-            'reg' => $form->createView(),
+            'form' => $form->createView(),
 //            'form' => $form->getData()
 //            $name = $form->get('name')->getData()
         ));

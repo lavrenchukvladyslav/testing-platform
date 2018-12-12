@@ -1,10 +1,12 @@
 <?php
+
 namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\RoleRepository")
  */
-class Roles
+class Role
 {
     /**
      * @ORM\Id()
@@ -20,6 +22,7 @@ class Roles
      * @ORM\Column(type="string", length=255)
      */
     public $user;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -42,4 +45,5 @@ class Roles
         $this->user = $user;
         return $this;
     }
+
 }

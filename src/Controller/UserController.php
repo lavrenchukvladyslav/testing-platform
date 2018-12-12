@@ -1,7 +1,7 @@
 <?php
 namespace App\Controller;
 use App\Entity\User;
-use App\Form\RegistrationType;
+use App\Form\TypeRegistration;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -23,14 +23,15 @@ class UserController extends AbstractController
     public function registrationForm(Request $request)
     {
         $registration = new User();
-        $form = $this->createForm(RegistrationType::class, $registration);
+        $form = $this->createForm(TypeRegistration::class, $registration);
+
         $form->handleRequest($request);
         dump($form->getData());
+
         return $this->render('user/registration.html.twig', array(
             'form' => $form->createView(),
 //            'form' => $form->getData()
 //            $name = $form->get('name')->getData()
         ));
     }
-
 }

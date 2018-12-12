@@ -1,8 +1,11 @@
 <?php
-
 namespace App\Entity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ */
 
 class User
 {
@@ -11,7 +14,7 @@ class User
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-//    private $id;
+    private $id;
     /**
      * @Assert\NotBlank
      * @Assert\Length(min=2)
@@ -48,6 +51,7 @@ class User
      */
     public $phone;
     /**
+     * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
      * @Assert\Image(
      *     minWidth = 200,
@@ -127,4 +131,5 @@ class User
         $this->role = $role;
         return $this;
     }
+
 }

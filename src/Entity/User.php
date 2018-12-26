@@ -1,7 +1,11 @@
 <?php
 namespace App\Entity;
+use Symfony\Component\Security\Core\Role\Role;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
@@ -14,6 +18,7 @@ class User
      */
     private $id;
     /**
+     * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
      * @Assert\Length(min=2)
      * @Assert\Length(max=22)
@@ -59,7 +64,18 @@ class User
      * )
      */
     public $photo;
-    public $role;
+
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Roles")
+     */
+    private $role;
+
+    public function __construct()
+    {
+        $this->role = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -119,13 +135,29 @@ class User
         $this->photo = $photo;
         return $this;
     }
-    public function getRole()
+    /**
+     * @return Collection|Roles[]
+     */
+    public function getRole(): Collection
     {
         return $this->role;
     }
-    public function setRole($role)
+
+    public function addRole(Roles $role): self
     {
-        $this->role = $role;
+        if (!$this->role->contains($role)) {
+            $this->role[] = $role;
+        }
+
+        return $this;
+    }
+
+    public function removeRole(Roles $role): self
+    {
+        if ($this->role->contains($role)) {
+            $this->role->removeElement($role);
+        }
+
         return $this;
     }
 }

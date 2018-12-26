@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Roles;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -15,6 +16,8 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Doctrine\ORM\EntityRepository;
 
 class TypeRegistration extends abstractType
 
@@ -28,30 +31,22 @@ class TypeRegistration extends abstractType
             ->add('password', PasswordType::class)
             ->add('phone', NumberType::class)
             ->add('photo',  FileType::class)
-            ->add('role', CollectionType::class, array(
-                'label' => 'role',
-                'entry_type' => ChoiceType::class,
-                'entry_options'  => array(
-                    'choices'  => array(
-                        'Super admin' => 3,
-                        'Admin' => 2,
-                        'Student' => 1,
-                        'Abiturient' => 0,
-                    ),
-                ),
-                'allow_add' => true,
-                'prototype' => true,
-//                'prototype_data' => 'New Tag Placeholder',
-            ))
-
-            ->add('save', SubmitType::class, array('label' => 'Create user'));
+            ->add('role', EntityType::class, [
+                'multiple'=> true,
+                'expanded'=> true,
+                'class'=> 'App\Entity\Roles',
+                'choice_label' => 'name',
+                'choice_value' => function (Roles $entity = null) {
+                    return $entity ? $entity->getId() : '';
+                },
+            ])
+            ->add('save', SubmitType::class, ['label' => 'Create user']);
 
     }
     public function configureOptions( OptionsResolver $resolver ) {
         $resolver->setDefaults( [
             'data_class' => User::class,
-            'data_class1' => User::class,
-            'data_class2' => User::class,
+
 //            'validation_groups' => false,
         ] );
     }

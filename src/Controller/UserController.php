@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -25,14 +25,11 @@ class UserController extends AbstractController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function registrationForm(Request $request , FileUploader $fileUploader)
+    public function registrationForm(Request $request, FileUploader $fileUploader)
     {
         $user = new User();
         $form = $this->createForm(TypeRegistration::class, $user);
         $form->handleRequest($request);
-
-
-
 
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -65,14 +62,9 @@ class UserController extends AbstractController
         };
 
 
-
-
-
-
-
         return $this->render('user/registration.html.twig', array(
             'form' => $form->createView(),
-//            'form' => $form->getData()
+            'form2' => $form['name']->getData()
         ));
     }
 
@@ -89,12 +81,31 @@ class UserController extends AbstractController
 //    }
 
 
-
     /**
      * @return string
      */
     private function generateUniqueFileName()
     {
         return md5(uniqid());
+    }
+
+    /**
+     * @Route("/userPhoto/photo/{id}", name="user_show")
+     */
+    public function showAction($id)
+    {
+        $user = $this->getDoctrine()
+            ->getRepository(User::class)
+            ->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException(
+                'No product found for id ' . $id
+            );
+        }
+
+        return new Response($user->getPhoto());
+
+
     }
 }

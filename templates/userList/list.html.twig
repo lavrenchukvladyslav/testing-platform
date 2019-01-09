@@ -1,0 +1,65 @@
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+
+    <div class="container">
+        <div style="text-align: right">
+            <a href="/user/registration">register</a>
+            <span> or </span>
+            <a href="#">log in</a>
+        </div>
+
+        <h2 style="text-align: center">Users List</h2>
+        <table class="table">
+            <tr>
+                <td>id</td>
+                <td>name</td>
+                <td>second name</td>
+                <td>email</td>
+                <td>phone</td>
+                <td>actions</td>
+            </tr>
+            {% for user in users %}
+                <tr>
+                    <td>
+                        {{ user.id }}
+                    </td>
+                    <td>
+                        {{ user.name }}
+                    </td>
+                    <td>
+                        {{ user.secondName }}
+                    </td>
+                    <td>
+                        {{ user.email }}
+                    </td>
+                    <td>
+                        {{ user.phone }}
+                    </td>
+                    {#<td>#}
+                        {#{{ user.role }}#}
+                    {#</td>#}
+                    <td>
+                        <a href="/user/edit/{{ user.id }}"><i class="fas fa-edit"></i></a>
+                        <a href="/delete/{{ user.id }}"><i class="fas fa-trash-alt"></i></a>
+                        <i class="fas fa-address-card"></i>
+                    </td>
+                </tr>
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+
+
+
+
+
+{% endblock %}
+
+
+
+

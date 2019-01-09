@@ -68,19 +68,6 @@ class UserController extends AbstractController
         ));
     }
 
-//    public function new(Request $request, FileUploader $fileUploader){
-//        $user = new User();
-//        $form = $this->createForm(TypeRegistration::class, $user);
-//        $form->handleRequest($request);
-//        if ($form->isSubmitted() && $form->isValid()) {
-//            $file = $user->getPhoto();
-//            $fileName = $fileUploader->upload($file);
-//
-//            $user->setPhoto($fileName);
-//        }
-//    }
-
-
     /**
      * @return string
      */
@@ -97,15 +84,83 @@ class UserController extends AbstractController
         $user = $this->getDoctrine()
             ->getRepository(User::class)
             ->find($id);
+        $photo = $user->getPhoto();
 
         if (!$user) {
             throw $this->createNotFoundException(
                 'No product found for id ' . $id
             );
         }
+        return $this->render('userPhoto/photo.html.twig', array(
+            'photo' => $photo
+        ));
+    }
+    /**
+     * @Route("/userList/list", name="user_list")
+     */
+    public function showUserList()
+    {
+        $repository = $this->getDoctrine()->getRepository(User::class);
+        $users = $repository->findAll();
+        return $this->render('userList/list.html.twig', [
+            'users'=>$users
+        ]);
+    }
 
-        return new Response($user->getPhoto());
 
 
+    /**
+     * @Route("/delete/{id}", name="deleteUser")
+     */
+    public function deleteAction(User $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository(User::class)->find($id);
+        $em->remove($user);
+        $em->flush();
+        return $this->redirectToRoute('user_list', [
+            'id'=>$id
+        ]);
+    }
+    /**
+     * @Route("/user/edit/{id}")
+     */
+    public function updateAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository(User::class)->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException(
+                'No user found for id '.$id
+            );
+        }
+        $new_name = 'New User name!';
+
+        $user->setName($new_name);
+        $em->flush();
+
+        return $this->redirectToRoute('user_list');
+    }
+    /**
+     * @Route("/overview/overview/{id}", name="user_overview")
+     */
+    public function overviewAction($id)
+    {
+        $repository = $this->getDoctrine()->getRepository(User::class)
+        ->findBy('id' => $id);
+//        $em = $this->getDoctrine()->getManager();
+//        $users = $em->getRepository(User::class)->find($id)
+//        $user = $users->findBy(['id' => $id]);
+
+//        if (!$users) {
+//            throw $this->createNotFoundException(
+//                'No user found for id '.$id
+//            );
+//        }
+
+        return $this->render('/overview/overview/{id}', [
+            'users'=>$users
+        ]);
     }
 }

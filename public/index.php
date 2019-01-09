@@ -25,4 +25,5 @@ $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 $response->send();
 $kernel->terminate($request, $response);
-echo '<div><a href="/user/registration">registration</div>';
+echo '<div><a href="/user/registration">Registration</div>';
+echo '<div><a href="/userList/list">User list</div>';

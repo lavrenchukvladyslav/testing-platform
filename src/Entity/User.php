@@ -69,7 +69,7 @@ class User
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Roles")
      */
-    private $role;
+    public $role;
 
     public function __construct()
     {

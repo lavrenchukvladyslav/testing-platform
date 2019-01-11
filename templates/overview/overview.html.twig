@@ -5,10 +5,26 @@
 
 
     <div class="container">
-        <h2 style="text-align: center">registration</h2>
+        <div class="row">
+            <div class="col-sm">
+                <img src="/uploads/photos/{{ user.photo }}" alt="photo">
+            </div>
+            <div class="col-sm">
+                <h3>
+                    {{ user.name }} {{ user.secondName }}
+                </h3>
+                <div>
+                    <b>e-mail: </b>{{ user.email }}
+                </div>
+                <div>
+                    <b>phone: </b>{{ user.phone }}
+                </div>
+                <div>
+                    <b>role: </b>{{ user.id }}
+                </div>
+            </div>
+        </div>
     </div>
-
-
 
 
 

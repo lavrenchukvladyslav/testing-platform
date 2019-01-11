@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserController extends AbstractController
 {
     /**
-     * @Route("/user/registration")
+     * @Route("/user/registration", name="registration")
      * @param Request $request
      *
      * @return \Symfony\Component\HttpFoundation\Response
@@ -112,14 +112,14 @@ class UserController extends AbstractController
     /**
      * @Route("/delete/{id}", name="deleteUser")
      */
-    public function deleteAction(User $id)
+    public function deleteAction($id)
     {
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository(User::class)->find($id);
         $em->remove($user);
         $em->flush();
         return $this->redirectToRoute('user_list', [
-            'id'=>$id
+//            'id'=>$id,
         ]);
     }
     /**
@@ -147,8 +147,8 @@ class UserController extends AbstractController
      */
     public function overviewAction($id)
     {
-        $repository = $this->getDoctrine()->getRepository(User::class)
-        ->findBy('id' => $id);
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository(User::class)->find($id);
 //        $em = $this->getDoctrine()->getManager();
 //        $users = $em->getRepository(User::class)->find($id)
 //        $user = $users->findBy(['id' => $id]);
@@ -159,8 +159,10 @@ class UserController extends AbstractController
 //            );
 //        }
 
-        return $this->render('/overview/overview/{id}', [
-            'users'=>$users
+//        return $this->render('/overview/overview/{id}', [
+        return $this->render('/overview/overview.html.twig', [
+            'id'=>$id,
+            'user'=>$user
         ]);
     }
 }

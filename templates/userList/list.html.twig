@@ -43,46 +43,15 @@
                     {#</td>#}
                     <td>
                         <a href="/user/edit/{{ user.id }}"><i class="fas fa-edit"></i></a>
-                        {#<a href="/delete/{{ user.id }}"><i class="fas fa-trash-alt"></i></a>#}
-
-                        <a href="" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash-alt"></i></a> {% set user_id = user.id %}
+                        {#<a href="" data-toggle="modal" data-target="#deleteModal" data-id="{{ user.id }}" class="delete"><i class="fas fa-trash-alt"></i></a>#}
+                        <a href="/delete/{{ user.id }}"><i class="fas fa-trash-alt"></i></a>
                         <a href="/overview/overview/{{ user.id }}"><i class="fas fa-address-card"></i></a>
 
                     </td>
                 </tr>
-                <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header" style="border: none">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <h5 class="modal-body" style="text-align: center">
-                                Delete {{ user.name }} {{ user.secondName }} ?
-                            </h5>
-                            <div class="modal-footer" style="border: none">
-                                {{ user_id }}
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <a href="/delete/{{ user_id }}" type="button" class="btn btn-danger">Delete</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             {% endfor %}
         </table>
     </div>
-    <script>
-        $('#myModal').on('shown.bs.modal', function () {
-            $('#myInput').trigger('focus')
-        })
-    </script>
-
-
-
-
-
-
 {% endblock %}
 
 

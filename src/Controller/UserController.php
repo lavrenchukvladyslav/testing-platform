@@ -1,90 +1,174 @@
 <?php
-
 namespace App\Controller;
-
 use App\Entity\User;
-use App\Form\UserType;
-use App\Repository\UserRepository;
+use App\Form\TypeRegistration;
+use App\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Routing\Annotation\Route;
-
-/**
- * @Route("/user")
- */
 class UserController extends AbstractController
 {
     /**
-     * @Route("/", name="user_index", methods="GET")
+     * @Route("/user/registration", name="registration")
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function index(UserRepository $userRepository): Response
-    {
-        return $this->render('user/index.html.twig', ['users' => $userRepository->findAll()]);
-    }
-
-    /**
-     * @Route("/new", name="user_new", methods="GET|POST")
-     */
-    public function new(Request $request): Response
+    public function registrationForm(Request $request, FileUploader $fileUploader)
     {
         $user = new User();
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(TypeRegistration::class, $user);
         $form->handleRequest($request);
+
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+
+
+            $file = $user->getPhoto();
+            $fileName = $fileUploader->upload($file);
+
+            $user->setPhoto($fileName);
+
+            try {
+                $file->move(
+                    $this->getParameter('photos_directory'),
+                    $fileName
+                );
+            } catch (FileException $e) {
+                echo 'EXCEPTION';
+            }
+            $user->setPhoto($fileName);
             $em->persist($user);
             $em->flush();
+            dump($form->getData());
+        };
 
-            return $this->redirectToRoute('user_index');
-        }
 
-        return $this->render('user/new.html.twig', [
-            'user' => $user,
+        return $this->render('user/registration.html.twig', array(
             'form' => $form->createView(),
-        ]);
+            'user' => $user
+        ));
     }
 
     /**
-     * @Route("/{id}", name="user_show", methods="GET")
+     * @return string
      */
-    public function show(User $user): Response
+    private function generateUniqueFileName()
     {
-        return $this->render('user/show.html.twig', ['user' => $user]);
+        return md5(uniqid());
     }
 
+
     /**
-     * @Route("/{id}/edit", name="user_edit", methods="GET|POST")
+     * @Route("/user/edit/{id}", name="edit_user")
      */
-    public function edit(Request $request, User $user): Response
+    public function editAction(Request $request, FileUploader $fileUploader, User $user)
     {
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(TypeRegistration::class, $user);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $user = $form->getData();
+            $em = $this->getDoctrine()->getManager();
+            $file = $user->getPhoto();
+            $fileName = $fileUploader->upload($file);
 
-            return $this->redirectToRoute('user_index', ['id' => $user->getId()]);
+            $user->setPhoto($fileName);
+
+            try {
+                $file->move(
+                    $this->getParameter('photos_directory'),
+                    $fileName
+                );
+            } catch (FileException $e) {
+                echo 'EXCEPTION';
+            }
+            $user->setPhoto($fileName);
+
+            $em->persist($user);
+            $em->flush();
+            $this->addFlash('success', 'User updated!');
+            return $this->redirectToRoute('user_list');
         }
-
-        return $this->render('user/edit.html.twig', [
-            'user' => $user,
-            'form' => $form->createView(),
+        return $this->render('edit/edit.html.twig', [
+            'form' => $form->createView()
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="user_delete", methods="DELETE")
-     */
-    public function delete(Request $request, User $user): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($user);
-            $em->flush();
-        }
 
-        return $this->redirectToRoute('user_index');
+
+    /**
+     * @Route("/user/edit/{id}")
+     */
+    public function updateAction($id)
+{
+
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository(User::class)->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException(
+                'No user found for id '.$id
+            );
+        }
+        $new_name = 'New User name!';
+
+        $user->setName($new_name);
+        $em->flush();
+
+        return $this->redirectToRoute('user_list');
+    }
+
+    /**
+     * @Route("/userList/list", name="user_list")
+     */
+
+    public function showUserList()
+    {
+        $repository = $this->getDoctrine()->getRepository(User::class);
+        $users = $repository->findAll();
+        return $this->render('userList/list.html.twig', [
+            'users'=>$users
+
+        ]);
+    }
+
+
+
+    /**
+     * @Route("/delete/{id}", name="deleteUser")
+     */
+    public function deleteAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository(User::class)->find($id);
+        $em->remove($user);
+        $em->flush();
+        return $this->redirectToRoute('user_list');
+    }
+
+    /**
+     * @Route("/overview/overview/{id}", name="user_overview")
+     */
+    public function overviewAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository(User::class)->find($id);
+        $a = dump($user);
+        return $this->render('/overview/overview.html.twig', [
+            'id'=>$id,
+            'user'=>$user,
+            'a'=>$a
+        ]);
     }
 }

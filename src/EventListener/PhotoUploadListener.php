@@ -32,7 +32,6 @@ class PhotoUploadListener
 
     private function uploadFile($entity)
     {
-        // загрузка работает только для сущностей User
         if (!$entity instanceof User) {
             return;
         }

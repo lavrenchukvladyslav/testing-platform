@@ -73,13 +73,15 @@ class UserController extends AbstractController
     /**
      * @Route("/user/edit/{id}", name="edit_user")
      */
-    public function editAction(Request $request, FileUploader $fileUploader, User $user)
+    public function editAction(Request $request, FileUploader $fileUploader, User $user): Response
     {
         $form = $this->createForm(TypeRegistration::class, $user);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $form->getData();
+//            $this->getDoctrine()->getManager()->flush();
             $em = $this->getDoctrine()->getManager();
+
+
             $file = $user->getPhoto();
             $fileName = $fileUploader->upload($file);
 
@@ -91,43 +93,47 @@ class UserController extends AbstractController
                     $fileName
                 );
             } catch (FileException $e) {
-                echo 'EXCEPTION';
+                echo 'Photos directory not found';
             }
             $user->setPhoto($fileName);
 
-            $em->persist($user);
+
             $em->flush();
-            $this->addFlash('success', 'User updated!');
-            return $this->redirectToRoute('user_list');
+
+            return $this->redirectToRoute('user_list'
+                ,['id' => $user->getId()]
+            );
         }
+
         return $this->render('edit/edit.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'user' => $user
         ]);
     }
 
 
 
-    /**
-     * @Route("/user/edit/{id}")
-     */
-    public function updateAction($id)
-{
-
-        $em = $this->getDoctrine()->getManager();
-        $user = $em->getRepository(User::class)->find($id);
-
-        if (!$user) {
-            throw $this->createNotFoundException(
-                'No user found for id '.$id
-            );
-        }
-        $new_name = 'New User name!';
-
-        $user->setName($new_name);
-        $em->flush();
-
-        return $this->redirectToRoute('user_list');
-    }
+//    /**
+//     * @Route("/user/edit/{id}")
+//     */
+//    public function updateAction($id)
+//{
+//
+//        $em = $this->getDoctrine()->getManager();
+//        $user = $em->getRepository(User::class)->find($id);
+//
+//        if (!$user) {
+//            throw $this->createNotFoundException(
+//                'No user found for id '.$id
+//            );
+//        }
+//        $new_name = 'New User name!';
+//
+//        $user->setName($new_name);
+//        $em->flush();
+//
+//        return $this->redirectToRoute('user_list');
+//    }
 
     /**
      * @Route("/userList/list", name="user_list")

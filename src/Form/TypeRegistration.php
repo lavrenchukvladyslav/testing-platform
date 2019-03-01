@@ -30,7 +30,7 @@ class TypeRegistration extends abstractType
             ->add('email', EmailType::class)
             ->add('password', PasswordType::class)
             ->add('phone', NumberType::class)
-            ->add('photo',  FileType::class);
+            ->add('photo',  FileType::class)
 //            ->add('role', EntityType::class, [
 //                'multiple'=> true,
 //                'expanded'=> true,
@@ -40,7 +40,7 @@ class TypeRegistration extends abstractType
 //                    return $entity ? $entity->getId() : '';
 //                },
 //            ])
-//            ->add('save', SubmitType::class, ['label' => 'Create user']);
+            ->add('save', SubmitType::class, ['label' => 'Create user']);
 
     }
     public function configureOptions( OptionsResolver $resolver ) {

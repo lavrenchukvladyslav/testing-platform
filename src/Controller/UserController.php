@@ -16,51 +16,103 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Form\FormError;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
 class UserController extends AbstractController
 {
     /**
-     * @Route("/user/registration", name="registration")
+     * @Route("/user/registration", name="registration", methods="GET|POST", options={"expose"=true})
      * @param Request $request
-     *
      * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Exception
      */
-    public function registrationForm(Request $request, FileUploader $fileUploader)
+
+    public function new(Request $request): Response
     {
+        $em = $this->getDoctrine()->getManager();
+
         $user = new User();
+
         $form = $this->createForm(TypeRegistration::class, $user);
         $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $file = $form->get('photo')->getData();
+                if ($file) {
+                    $checkMime = $this->checkImage($file->getMimeType());
+                    if (!$checkMime) {
+                        $form->get('photo')->addError(new FormError('Uploaded file is not a valid image'));
+                        return $this->render('user/registration.html.twig', [
+                            'user' => $user,
+                            'form' => $form->createView(),
+                        ]);
+                    }
 
+                    $fileSystem = new Filesystem();
+                    if (!$fileSystem->exists('../public/uploads/photos')) {
+                        $fileSystem->mkdir('../public/uploads/photos', 0777);
+                    }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-
-
-            $file = $user->getPhoto();
-            $fileName = $fileUploader->upload($file);
-
-            $user->setPhoto($fileName);
-
-            try {
-                $file->move(
+                    $fileName = $this->generateUniqueFileName() . '.' . $file->guessExtension();
+                    $file->move(
                     $this->getParameter('photos_directory'),
                     $fileName
                 );
-            } catch (FileException $e) {
-                echo 'EXCEPTION';
+
+                    $user->setPhoto($fileName);
+                }
+
+
+                $em->persist($user);
+                $em->flush();
+
+                return $this->redirectToRoute('user_list');
             }
-            $user->setPhoto($fileName);
-            $em->persist($user);
-            $em->flush();
-            dump($form->getData());
-        };
 
 
-        return $this->render('user/registration.html.twig', array(
-            'form' => $form->createView(),
-            'user' => $user
-        ));
-    }
+            return $this->render('user/registration.html.twig', [
+                'user' => $user,
+                'form' => $form->createView(),
+            ]);
+        }
 
+//    public function registrationForm(Request $request, FileUploader $fileUploader)
+//    {
+//        $user = new User();
+//        $form = $this->createForm(TypeRegistration::class, $user);
+//        $form->handleRequest($request);
+//
+//
+//        if ($form->isSubmitted() && $form->isValid()) {
+//            $em = $this->getDoctrine()->getManager();
+//
+//
+//            $file = $user->getPhoto();
+//            $fileName = $fileUploader->upload($file);
+//
+//            $user->setPhoto($fileName);
+//
+//            try {
+//                $file->move(
+//                    $this->getParameter('photos_directory'),
+//                    $fileName
+//                );
+//            } catch (FileException $e) {
+//                echo 'EXCEPTION';
+//            }
+//            $user->setPhoto($fileName);
+//            $em->persist($user);
+//            $em->flush();
+//            dump($form->getData());
+//        };
+//
+//
+//        return $this->render('user/registration.html.twig', array(
+//            'form' => $form->createView(),
+//            'user' => $user
+//        ));
+//    }
     /**
      * @return string
      */
@@ -71,45 +123,146 @@ class UserController extends AbstractController
 
 
     /**
-     * @Route("/user/edit/{id}", name="edit_user")
+     * @Route("/user/edit/{id}", name="edit_user", methods="GET|POST")
+     * @param Request $request
+     * @param $id
+     * @return Response
+     * @throws \Exception
      */
-    public function editAction(Request $request, FileUploader $fileUploader, User $user): Response
+    public function edit(Request $request, $id): Response
     {
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository("App:User")->find($id);
+
+
         $form = $this->createForm(TypeRegistration::class, $user);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-//            $this->getDoctrine()->getManager()->flush();
-            $em = $this->getDoctrine()->getManager();
+            $file = $form->get('user')->getData();
+            $deletePhoto =$request->request->get('photoDelete');
+            $oldFile = $user->getPhoto();
 
+            if ($file) {
+                $checkMime = $this->checkImage($file->getMimeType());
+                if (!$checkMime) {
+//                    $form->get('photo')->addError(new FormError('Uploaded file is not a valid image'));
+                    return $this->render('user/registration.html.twig', [
+                        'user' => $user,
+                        'form' => $form->createView(),
+                        'isedit'=>true,
+                    ]);
+                }
 
-            $file = $user->getPhoto();
-            $fileName = $fileUploader->upload($file);
+                $fileSystem = new Filesystem();
 
-            $user->setPhoto($fileName);
+                $fileName = $this->generateUniqueFileName().'.'.$file->guessExtension();
 
-            try {
+                if ($oldFile && $fileSystem->exists('../public/uploads/photos/' . $oldFile)) {
+                    unlink($this->get('kernel')->getRootDir() . '/../public/uploads/signature/'.$oldFile);
+                }
+
                 $file->move(
-                    $this->getParameter('photos_directory'),
+                    $this->get('kernel')->getRootDir() . '/../public/uploads/signature/',
                     $fileName
                 );
-            } catch (FileException $e) {
-                echo 'Photos directory not found';
+
+                $user->setPhoto($fileName);
+
+            } elseif ($deletePhoto){
+                if ($oldFile) {
+                    unlink($this->getParameter('photos_directory').$oldFile);
+                }
+
+                $user->setPhoto(null);
             }
-            $user->setPhoto($fileName);
 
+            $this->getDoctrine()->getManager()->flush();
 
-            $em->flush();
+//            $this->addFlash('success','Arbitration Attorney was successfully updated');
 
-            return $this->redirectToRoute('user_list'
-                ,['id' => $user->getId()]
-            );
+            return $this->redirectToRoute('edit_user', ['id' => $user->getId()]);
         }
+//        if ($form->isSubmitted() && !$form->isValid()) {
+//            $this->addFlash('error','Error while saving Arbitration Attorney');
+//        }
 
         return $this->render('edit/edit.html.twig', [
+            'user' => $user,
             'form' => $form->createView(),
-            'user' => $user
+            'isedit'=>true,
         ]);
     }
+
+
+//    public function editAction(Request $request, FileUploader $fileUploader, User $user): Response
+//    {
+//        $form = $this->createForm(TypeRegistration::class, $user);
+//        $form->handleRequest($request);
+//        if ($form->isSubmitted() && $form->isValid()) {
+////            $this->getDoctrine()->getManager()->flush();
+//            $em = $this->getDoctrine()->getManager();
+//
+//
+////            $file = $form->getPhoto();
+//            $deletePhoto =$request->request->get('photoDelete');
+//            $file = $form->get('photo')->getData();
+//            $oldFile = $user->getPhoto();
+//
+//            if ($file) {
+//                    $form->get('photo')->addError(new FormError('Uploaded file is not a valid image'));
+//                    return $this->render('arb_attorney/edit.html.twig', [
+//                        'user' => $user,
+//                        'form' => $form->createView(),
+//                        'isedit'=>true,
+//                    ]);
+//
+//                $fileName = $this->generateUniqueFileName().'.'.$file->guessExtension();
+//
+//                $file->move(
+//                    $this->get('kernel')->getRootDir() . '/../public/uploads/signature/',
+//                    $fileName
+//                );
+//
+//                $user->setPhoto($fileName);
+//
+//            } elseif ($deletePhoto){
+//                if ($oldFile) {
+//                    unlink($this->get('kernel')->getRootDir() . '/../public/uploads/signature/'.$oldFile);
+//                }
+//
+//                $user->setPhoto(null);
+//            }
+//
+//
+//
+//            $fileName = $fileUploader->upload($file);
+//
+//            $user->setPhoto($fileName);
+//
+//            try {
+//                $file->move(
+//                    $this->getParameter('photos_directory'),
+//                    $fileName
+//                );
+//            } catch (FileException $e) {
+//                echo 'Photos directory not found';
+//            }
+//            $user->setPhoto($fileName);
+//
+//
+//            $em->flush();
+//
+//            return $this->redirectToRoute('user_list'
+//                ,['id' => $user->getId()]
+//            );
+//        }
+//
+//        return $this->render('edit/edit.html.twig', [
+//            'form' => $form->createView(),
+//            'user' => $user
+//        ]);
+//    }
 
 
 
@@ -176,5 +329,18 @@ class UserController extends AbstractController
             'user'=>$user,
             'a'=>$a
         ]);
+    }
+    /**
+     * @param $type
+     * @return bool
+     */
+    private function checkImage($type)
+    {
+        $array = ['image/gif', 'image/png', 'image/gif', 'image/png', 'image/bmp', 'image/tiff'];
+        if (in_array($type, $array)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

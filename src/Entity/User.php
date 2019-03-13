@@ -48,14 +48,12 @@ class User
     public $password;
     /**
      * @ORM\Column(type="integer")
-     * @Assert\NotBlank
      * @Assert\Length(min=2)
      * @Assert\Length(max=22)
      */
     public $phone;
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
      * @Assert\Image(
      *     minWidth = 200,
      *     maxWidth = 4000,

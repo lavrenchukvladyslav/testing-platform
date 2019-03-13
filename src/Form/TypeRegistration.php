@@ -28,27 +28,26 @@ class TypeRegistration extends abstractType
             ->add('name', TextType::class)
             ->add('secondName', TextType::class)
             ->add('email', EmailType::class)
-            ->add('password', PasswordType::class)
+            ->add('password', PasswordType::class, array('required' => false, 'mapped' => false))
             ->add('phone', NumberType::class)
-            ->add('photo',  FileType::class)
-//            ->add('role', EntityType::class, [
-//                'multiple'=> true,
-//                'expanded'=> true,
-//                'class'=> 'App\Entity\Roles',
-//                'choice_label' => 'name',
-//                'choice_value' => function (Roles $entity = null) {
-//                    return $entity ? $entity->getId() : '';
-//                },
-//            ])
+            ->add('photo',  FileType::class, array('data_class' => null,'required' => false, 'mapped' => false))
+            ->add('role', EntityType::class, [
+                'multiple'=> true,
+                'expanded'=> true,
+                'class'=> 'App\Entity\Roles',
+                'choice_label' => 'name',
+                'choice_value' => function (Roles $entity = null) {
+                    return $entity ? $entity->getId() : '';
+                },
+            ])
             ->add('save', SubmitType::class, ['label' => 'Create user']);
+//            ->add('update', SubmitType::class, ['label' => 'Update user']);
 
     }
     public function configureOptions( OptionsResolver $resolver ) {
-        $resolver->setDefaults( [
+        $resolver->setDefaults([
             'data_class' => User::class,
             'User' => User::class
-
-//            'validation_groups' => false,
-        ] );
+        ]);
     }
 }

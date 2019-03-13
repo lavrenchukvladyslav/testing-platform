@@ -7,15 +7,16 @@
     <div class="container">
         <h2 style="text-align: center">registration</h2>
         {{ form_start(form) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.secondName) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.password) }}
+        {{ form_row(form.phone) }}
+        {{ form_row(form.photo) }}
+        {{ form_row(form.role) }}
+        {{ form_row(form.save) }}
         {{ form_end(form) }}
-            {#{{ form_row(form.name) }}#}
-            {#{{ form_row(form.secondName) }}#}
-            {#{{ form_row(form.email) }}#}
-            {#{{ form_row(form.password) }}#}
-            {#{{ form_row(form.phone) }}#}
-            {#{{ form_row(form.photo) }}#}
-            {#{{ form_row(form.role) }}#}
-            {#{{ form_row(form.save) }}#}
+
         <hr>
     </div>
 

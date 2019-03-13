@@ -1,0 +1,33 @@
+{{ form_start(form) }}
+    {#{{ form_widget(form) }}#}
+<div class="container">
+    <div>
+        {{ form_widget(form.question) }}
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <h4>Answers</h4>
+        </div>
+        <div class="col-sm-4">
+            <h4>Correct</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            {#{{ form_label(form.answer.answer) }}#}
+            {{ form_widget(form.answer.answer) }}
+        </div>
+        <div class="col-sm-3">
+            {#{{ form_label(form.answer.correctness) }}#}
+            {{ form_widget(form.answer.correctness) }}
+            {{ form_widget(form.answer.test) }}
+        </div>
+        <div class="col-sm-1">
+            <button>+</button>
+            <button>-</button>
+        </div>
+    </div>
+    <button class="btn">{{ button_label|default('Save') }}</button>
+
+</div>
+{#{{ form_end(form) }}#}

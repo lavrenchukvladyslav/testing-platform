@@ -28,3 +28,4 @@ $kernel->terminate($request, $response);
 //echo '<div><a href="../templates/user/registration.html.twig">Registration</div>';
 echo '<div><a href="/../user/registration/">Registration</div>';
 echo '<div><a href="/userList/list/">User list</div>';
+echo '<div><a href="/question/">question list</div>';

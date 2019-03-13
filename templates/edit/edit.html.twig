@@ -5,9 +5,17 @@
 <div class="container">
     <div class="row">
         <div class="col-xs-12">
-            <h1>Edit Genus</h1>
+            <h1>Edit User</h1>
             {{ form_start(form) }}
-            {{ form_end(form) }}
+            {{ form_row(form.name) }}
+            {{ form_row(form.secondName) }}
+            {{ form_row(form.email) }}
+            {#{{ form_row(form.password) }}#}
+            {{ form_row(form.phone) }}
+            {{ form_row(form.photo) }}
+            {{ form_row(form.role) }}
+            {{ form_row(form.save) }}
+            {#{{ form_end(form) }}#}
         </div>
     </div>
 </div>

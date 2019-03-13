@@ -20,7 +20,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\FormError;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-class UserController extends AbstractController
+class UserController extends controller
 {
     /**
      * @Route("/user/registration", name="registration", methods="GET|POST", options={"expose"=true})
@@ -133,24 +133,26 @@ class UserController extends AbstractController
     {
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository("App:User")->find($id);
+//        dump($user);
 
 
         $form = $this->createForm(TypeRegistration::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $file = $form->get('user')->getData();
+        if ($form->isSubmitted()) {
+//        if ($form->isSubmitted() && $form->isValid()) {
+            $file = $form->get('photo')->getData();
             $deletePhoto =$request->request->get('photoDelete');
             $oldFile = $user->getPhoto();
 
             if ($file) {
                 $checkMime = $this->checkImage($file->getMimeType());
                 if (!$checkMime) {
-//                    $form->get('photo')->addError(new FormError('Uploaded file is not a valid image'));
-                    return $this->render('user/registration.html.twig', [
+                    $form->get('photo')->addError(new FormError('Uploaded file is not a valid image'));
+                    return $this->render('edit/edit.html.twig', [
                         'user' => $user,
                         'form' => $form->createView(),
-                        'isedit'=>true,
+//                        'isedit'=>true,
                     ]);
                 }
 
@@ -159,11 +161,11 @@ class UserController extends AbstractController
                 $fileName = $this->generateUniqueFileName().'.'.$file->guessExtension();
 
                 if ($oldFile && $fileSystem->exists('../public/uploads/photos/' . $oldFile)) {
-                    unlink($this->get('kernel')->getRootDir() . '/../public/uploads/signature/'.$oldFile);
+                    unlink($this->get('kernel')->getRootDir() . '/../public/uploads/photos/'.$oldFile);
                 }
 
                 $file->move(
-                    $this->get('kernel')->getRootDir() . '/../public/uploads/signature/',
+                    $this->get('kernel')->getRootDir() . '/../public/uploads/photos/',
                     $fileName
                 );
 
@@ -179,9 +181,9 @@ class UserController extends AbstractController
 
             $this->getDoctrine()->getManager()->flush();
 
-//            $this->addFlash('success','Arbitration Attorney was successfully updated');
+            $this->addFlash('success','User was successfully updated');
 
-            return $this->redirectToRoute('edit_user', ['id' => $user->getId()]);
+            return $this->redirectToRoute('user_list', ['id' => $user->getId()]);
         }
 //        if ($form->isSubmitted() && !$form->isValid()) {
 //            $this->addFlash('error','Error while saving Arbitration Attorney');
@@ -190,7 +192,6 @@ class UserController extends AbstractController
         return $this->render('edit/edit.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
-            'isedit'=>true,
         ]);
     }
 
@@ -336,7 +337,7 @@ class UserController extends AbstractController
      */
     private function checkImage($type)
     {
-        $array = ['image/gif', 'image/png', 'image/gif', 'image/png', 'image/bmp', 'image/tiff'];
+        $array = ['image/gif', 'image/png', 'image/gif', 'image/png', 'image/bmp', 'image/tiff', 'image/img'];
         if (in_array($type, $array)) {
             return true;
         } else {

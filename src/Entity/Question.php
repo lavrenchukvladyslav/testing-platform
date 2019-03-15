@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Answer;
+use App\Entity\Test;
 use App\Form\AnswerType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -33,7 +34,7 @@ class Question
      * @Assert\Type(type="App\Entity\Answer")
      * @Assert\Valid()
      */
-    protected $answer;
+    private $answer;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Test")

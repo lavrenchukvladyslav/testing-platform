@@ -37,10 +37,11 @@ class AnswerController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+            dump($answer);
             $entityManager->persist($answer);
             $entityManager->flush();
 
-            return $this->redirectToRoute('answer_index');
+//            return $this->redirectToRoute('answer_index');
         }
 
         return $this->render('answer/new.html.twig', [

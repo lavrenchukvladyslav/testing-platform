@@ -32,18 +32,19 @@ class QuestionController extends AbstractController
     public function new(Request $request): Response
     {
         $question = new Question();
-
-
         $form = $this->createForm(QuestionType::class, $question);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
-            $answer = new Answer();
+//            $answer = new Answer();
             $questuon_id = $question->getId();
             dump($questuon_id);
-            $answer->setQuestionId($questuon_id);
-            $answer->setAnswer('answer');
-            $answer->setCorrectness('1');
+//            $answer->setQuestionId('1');
+//            $answer->setAnswer('answer');
+//            $answer->setCorrectness('1');
+//
+//            $question->setQuestion(1);
+//            $question->setTest('5');
 
 //            $answerField = $request->request->get('answer');
 //            $correctnessField = $request->request->get('correctness');
@@ -136,10 +137,6 @@ class QuestionController extends AbstractController
             'answers' => $answers,
         ]);
     }
-
-    // to do добавить поле test_name в question, вывести тест по тест_нейм, в твиге foreach question > foreach answer where a.question_id = q.id + checbox if correctness true среднне арифметическое всех ответов + new entity test results
-
-
     /**
      * @Route("/{id}/edit", name="question_edit", methods={"GET","POST"})
      */

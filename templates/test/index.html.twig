@@ -19,8 +19,10 @@
                 <td>{{ test.id }}</td>
                 <td>{{ test.name }}</td>
                 <td>
-                    <a href="{{ path('test_show', {'id': test.id}) }}">show</a>
+                    <a href="{{ path('doTest', {'id': test.id}) }}">do test</a>
+                    <span> | </span>
                     <a href="{{ path('test_edit', {'id': test.id}) }}">edit</a>
+                    <span> | </span>
                     <a href="{{ path('question_new', {'id': test.id}) }}">create questions</a>
                 </td>
             </tr>

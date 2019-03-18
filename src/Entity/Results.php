@@ -22,11 +22,11 @@ class Results
      */
     private $question;
 
-    /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Answer", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $resultAnswer;
+//    /**
+//     * @ORM\OneToOne(targetEntity="App\Entity\Answer", cascade={"persist", "remove"})
+//     * @ORM\JoinColumn(nullable=false)
+//     */
+//    private $resultAnswer;
 
     /**
      * @ORM\Column(type="boolean")
@@ -50,17 +50,17 @@ class Results
         return $this;
     }
 
-    public function getResultAnswer(): ?Answer
-    {
-        return $this->resultAnswer;
-    }
-
-    public function setResultAnswer(Answer $resultAnswer): self
-    {
-        $this->resultAnswer = $resultAnswer;
-
-        return $this;
-    }
+//    public function getResultAnswer(): ?Answer
+//    {
+//        return $this->resultAnswer;
+//    }
+//
+//    public function setResultAnswer(Answer $resultAnswer): self
+//    {
+//        $this->resultAnswer = $resultAnswer;
+//
+//        return $this;
+//    }
 
     public function getTakenAnswer(): ?bool
     {

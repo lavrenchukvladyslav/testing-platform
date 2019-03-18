@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Answer;
+use App\Entity\Results;
 use App\Entity\Test;
 use App\Entity\Question;
+use App\Form\ResultsType;
 use App\Form\TestType;
 use App\Form\QuestionType;
 use App\Repository\TestRepository;
@@ -126,14 +128,26 @@ class TestController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="test_show", methods={"GET"})
+     * @Route("/{id}", name="doTest", methods={"GET"})
      */
-    public function show(Test $test): Response
+    public function doTest(Request $request, Test $test): Response
     {
+//        $em = $this->getDoctrine()->getManager();
+//        $id = $test->getId();
+//        $case = $em->getRepository("App: ")->find($id);
+
+
+
+
+
+
+
+
+
         $em = $this->getDoctrine()->getManager();
         $id = $test->getId();
         $question = $em->getRepository('App:Question')->createQueryBuilder('q')
-//            ->where('q.id ='.$question_id)
+//            ->andWhere('q.id =:71')
             ->getQuery()
             ->getResult();
 
@@ -142,11 +156,27 @@ class TestController extends AbstractController
             ->getResult();
         dump($question);
         dump($answers);
+
+        $results = new Results();
+        $form = $this->createForm(ResultsType::class, $results);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $qId = 71;
+            $results->setQuestion($qId);
+            $results->setTakenAnswer(28);
+            $entityManager->persist($results);
+            $entityManager->flush();
+            return $this->render('test/show.html.twig');
+        }
+        dump($results);
         return $this->render('test/show.html.twig', [
             'test' => $test,
             'questions' => $question,
             'answers' => $answers,
-            'id' => $id
+            'id' => $id,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -186,6 +216,7 @@ class TestController extends AbstractController
         return $this->redirectToRoute('test_index');
     }
 }
+// to do get answers and question at the controller
 // to do save answers to the Results entity check results with correctness and show result % max 100%
 // to do create question with answer in 1 page + create 4 answers in 1 page + add answer fields dynamic + create many questions with answers dynamic
 // to do edit questions and answers

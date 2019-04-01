@@ -4,7 +4,7 @@ namespace App\EventListener;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use App\Entity\User;
+use App\Entity\reg;
 use App\Service\FileUploader;
 
 class PhotoUploadListener
@@ -32,7 +32,7 @@ class PhotoUploadListener
 
     private function uploadFile($entity)
     {
-        if (!$entity instanceof User) {
+        if (!$entity instanceof reg) {
             return;
         }
 

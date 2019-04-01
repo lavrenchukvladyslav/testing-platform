@@ -3,9 +3,33 @@
 {% block title %}New Answer{% endblock %}
 
 {% block body %}
-    <h1>Create new Answer</h1>
-
+    {#<h1>Create new Answer</h1>#}
+    <h5>{{ question.question }}</h5>
+    <table>
+        {% for answer in answers %}
+            <tr>
+                <td>
+                    <h6>
+                        {{ answer.answer}}
+                    </h6>
+                </td>
+                <td>
+                    {% if answer.correctness == NULL %}
+                        <h6> - incorrect answer</h6>
+                    {% else %}
+                        <h6>- correct answer</h6>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {#<h4>{{ answers.answer }} ----answer</h4>#}
+    {#{% for answer in answers %}#}
+        {#<div>#}
+           {#--|-{{  answers.answer }} -|----answer#}
+        {#</div>#}
+    {#{% endfor %}#}
+    {#<div>{{ answer.answer.0 }}</div>#}
     {{ include('answer/_form.html.twig') }}
-
-    <a href="{{ path('answer_index') }}">back to list</a>
+    <a class="btn btn-danger" href="{{ path('test_index') }}">back to list</a>
 {% endblock %}

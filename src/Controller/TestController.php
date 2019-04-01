@@ -9,6 +9,7 @@ use App\Entity\Question;
 use App\Form\ResultsType;
 use App\Form\TestType;
 use App\Form\QuestionType;
+use App\Form\AnswerType;
 use App\Repository\TestRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -60,28 +61,25 @@ class TestController extends AbstractController
     {
         $question = new Question();
         $question->setTest($test);
+        $answer = new Answer();
+        $answer->setQuestionId($question);
         $form = $this->createForm(QuestionType::class, $question);
         $form->handleRequest($request);
 //        dump($question);
         if ($form->isSubmitted()) {
 //            $id = $test->getId();
 //            dump($id);
-
-
-
-            $answer = new Answer();
-            $form = $this->createForm(Answer::class, $question);
-            $form->handleRequest($request);
-            $answer->setQuestionId($question);
-            dump($answer);
+//            $answer = new Answer();
+//            $answer->setQuestionId($question);
+//            $form = $this->createForm(Answer::class, $question);
+//            $form->handleRequest($request);
+//            dump($answer);
 //            dump($request->request->get('answer'));
 //            dump($request->request->get('correctness'));
 //            $answer->setAnswer($request->request->get('answer'));
 //            $answer->setCorrectness($request->request->get('correctness'));
-
-            $answer->setAnswer('answer');
-            $answer->setCorrectness(1);
-
+//            $answer->setAnswer('answer');
+//            $answer->setCorrectness(1);
 //            $answer = new Answer();
 //            $questuon_id = $question->getId();
 //            dump($questuon_id);
@@ -113,10 +111,13 @@ class TestController extends AbstractController
             $entityManager->persist($question);
 //            $entityManager->flush();
 //            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($answer);
+//            $entityManager->persist($answer);
             $entityManager->flush();
 
-//            return $this->redirectToRoute('question_index');
+            return $this->redirectToRoute('answer_new', [
+                'id' => $question->getId(),
+                'question' => $question
+            ]);
 
         }
 
@@ -128,55 +129,90 @@ class TestController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="doTest", methods={"GET"})
+     * @Route("{id}/new_answer", name="answer_new", methods={"GET","POST"})
+     */
+    public function new_answer(Request $request, Question $question): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+        $answers = $em->getRepository('App:Answer')->createQueryBuilder('q')
+            ->where('q.question_id ='.$question->getId())
+            ->getQuery()
+            ->getResult();
+        $answer = new Answer();
+        $answer->setQuestionId($question);
+        $form = $this->createForm(AnswerType::class, $answer);
+        $form->handleRequest($request);
+
+//        $em = $this->getDoctrine()->getManager();
+//        $questions = $em->getRepository('App:Question')->createQueryBuilder('q')
+//            ->getQuery()
+//            ->getResult();
+
+
+//        dump($questions);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($answer);
+            $entityManager->flush();
+            return $this->redirectToRoute('answer_new', [
+                'id' => $question->getId(),
+            ]);
+        }
+        return $this->render('answer/new.html.twig', [
+            'id' => $question->getId(),
+            'answer' => $answer,
+            'question' => $question,
+            'form' => $form->createView(),
+            'answers' => $answers,
+        ]);
+    }
+    /**
+     * @Route("/{id}do_test", name="doTest", methods={"GET"})
      */
     public function doTest(Request $request, Test $test): Response
     {
-//        $em = $this->getDoctrine()->getManager();
-//        $id = $test->getId();
-//        $case = $em->getRepository("App: ")->find($id);
-
-
-
-
-
-
-
-
-
+        $TestId = $test->getId();
         $em = $this->getDoctrine()->getManager();
-        $id = $test->getId();
-        $question = $em->getRepository('App:Question')->createQueryBuilder('q')
-//            ->andWhere('q.id =:71')
-            ->getQuery()
-            ->getResult();
-
-        $answers = $em->getRepository('App:Answer')->createQueryBuilder('a')
-            ->getQuery()
-            ->getResult();
-        dump($question);
-        dump($answers);
+//        $question = $em->getRepository("App:Question")->findOneBy(['test' => $TestId]);
+        $questions = $em->getRepository("App:Question")->findAll();
+//        $QuestionId = $question->getId();
+//        $em = $this->getDoctrine()->getManager();
+        $answers = $em->getRepository("App:Answer")->findAll();
+//        dump($answers);
+        dump($questions);
 
         $results = new Results();
         $form = $this->createForm(ResultsType::class, $results);
         $form->handleRequest($request);
-
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
-            $qId = 71;
-            $results->setQuestion($qId);
-            $results->setTakenAnswer(28);
             $entityManager->persist($results);
             $entityManager->flush();
-            return $this->render('test/show.html.twig');
+//            $QuestionId++;
+//            return $this->redirectToRoute('doTest', [
+//                'questionId' => $QuestionId,
+//            ]);
         }
-        dump($results);
+
+
+
+//        if ($form->isSubmitted()) {
+//            $entityManager = $this->getDoctrine()->getManager();
+//            $qId = 71;
+//            $results->setQuestion($qId);
+//            $results->setTakenAnswer(28);
+//            $entityManager->persist($results);
+//            $entityManager->flush();
+//            return $this->render('test/show.html.twig');
+//        }
         return $this->render('test/show.html.twig', [
             'test' => $test,
-            'questions' => $question,
+            'questions' => $questions,
             'answers' => $answers,
-            'id' => $id,
             'form' => $form->createView(),
+//            'questionId' => $QuestionId,
+//            'id' => $id,
+            'testId' => $test->getId(),
         ]);
     }
 
@@ -216,8 +252,3 @@ class TestController extends AbstractController
         return $this->redirectToRoute('test_index');
     }
 }
-// to do get answers and question at the controller
-// to do save answers to the Results entity check results with correctness and show result % max 100%
-// to do create question with answer in 1 page + create 4 answers in 1 page + add answer fields dynamic + create many questions with answers dynamic
-// to do edit questions and answers
-// to do for admin all content for user only show tests

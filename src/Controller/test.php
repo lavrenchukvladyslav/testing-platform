@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
+use App\Entity\reg;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,7 +28,7 @@ class test extends AbstractController
      */
     public function new(Request $request): Response
     {
-        $user = new User();
+        $user = new reg();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
@@ -49,7 +49,7 @@ class test extends AbstractController
     /**
      * @Route("/{id}", name="user_show", methods="GET")
      */
-    public function show(User $user): Response
+    public function show(reg $user): Response
     {
         return $this->render('user/show.html.twig', ['user' => $user]);
     }
@@ -57,7 +57,7 @@ class test extends AbstractController
     /**
      * @Route("/{id}/edit", name="user_edit", methods="GET|POST")
      */
-    public function edit(Request $request, User $user): Response
+    public function edit(Request $request, reg $user): Response
     {
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
@@ -77,7 +77,7 @@ class test extends AbstractController
     /**
      * @Route("/{id}", name="user_delete", methods="DELETE")
      */
-    public function delete(Request $request, User $user): Response
+    public function delete(Request $request, reg $user): Response
     {
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
             $em = $this->getDoctrine()->getManager();

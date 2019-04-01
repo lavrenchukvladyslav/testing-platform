@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Roles;
-use App\Entity\User;
+use App\Entity\reg;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -46,8 +46,8 @@ class TypeRegistration extends abstractType
     }
     public function configureOptions( OptionsResolver $resolver ) {
         $resolver->setDefaults([
-            'data_class' => User::class,
-            'User' => User::class
+            'data_class' => reg::class,
+            'User' => reg::class
         ]);
     }
 }

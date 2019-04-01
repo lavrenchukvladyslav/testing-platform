@@ -7,37 +7,30 @@
     <div class="container">
         <h2 align="center">{{ test.name }}</h2>
         <table>
-            {% set thisQuestionId = '' %}
-            {% for question in questions %}
-                {% if question.test.id == id %}
-                    <tr>
-                        <td style="background-color: red">{{ question.question }}</td>
-                        {% set thisQuestionId =  question.id   %}
-                    </tr>
-                    {% for answer in answers %}
-                        {% if answer.questionId.test.id == id %}
-                            {% if answer.questionId.id == thisQuestionId %}
-                                <tr>
-                                    <td>
-                                        {{ answer.answer}}
-                                    </td>
-                                </tr>
-                            {% endif %}
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-            {% endfor %}
-            {#{{ form_widget(form.question) }}#}
             <tr>
                 <td>
-                    1
+                    <h2>{{ testId }}</h2>
+                    {#{{ set testId = '' }}#}
+                    {% for question in questions %}
+                        {#{% if question.test_id = testId %}#}
+                        {{ question.test_id }}
+                        {#{% endif %}#}
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for answer in answers %}
+                        {#{{ answer.answer }}#}
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for  in  %}
+                        
+                    {% endfor %}
+                    {{ form_widget(form) }}
                 </td>
             </tr>
 
-
-
         </table>
-        {{ form_widget(form.takenAnswer) }}
 
         <button class="btn">{{ button_label|default('Save') }}</button>
 

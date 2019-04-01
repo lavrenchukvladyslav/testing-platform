@@ -26,29 +26,29 @@ class AnswerController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="answer_new", methods={"GET","POST"})
-     */
-    public function new(Request $request): Response
-    {
-        $answer = new Answer();
-        $form = $this->createForm(AnswerType::class, $answer);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            dump($answer);
-            $entityManager->persist($answer);
-            $entityManager->flush();
-
+//    /**
+//     * @Route("/new", name="answer_new", methods={"GET","POST"})
+//     */
+//    public function new(Request $request, Question $question): Response
+//    {
+//        $answer = new Answer();
+//        $answer->setQuestionId($question);
+//        $form = $this->createForm(AnswerType::class, $answer);
+//        $form->handleRequest($request);
+//
+//        if ($form->isSubmitted() && $form->isValid()) {
+//            $entityManager = $this->getDoctrine()->getManager();
+//            dump($answer);
+//            $entityManager->persist($answer);
+//            $entityManager->flush();
+//
 //            return $this->redirectToRoute('answer_index');
-        }
-
-        return $this->render('answer/new.html.twig', [
-            'answer' => $answer,
-            'form' => $form->createView(),
-        ]);
-    }
+//        }
+//        return $this->render('answer/new.html.twig', [
+//            'answer' => $answer,
+//            'form' => $form->createView(),
+//        ]);
+//    }
 
     /**
      * @Route("/{id}", name="answer_show", methods={"GET"})

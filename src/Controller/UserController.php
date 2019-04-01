@@ -1,6 +1,6 @@
 <?php
 namespace App\Controller;
-use App\Entity\User;
+use App\Entity\reg;
 use App\Form\TypeRegistration;
 use App\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,7 +33,7 @@ class UserController extends controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $user = new User();
+        $user = new reg();
 
         $form = $this->createForm(TypeRegistration::class, $user);
         $form->handleRequest($request);
@@ -295,7 +295,7 @@ class UserController extends controller
 
     public function showUserList()
     {
-        $repository = $this->getDoctrine()->getRepository(User::class);
+        $repository = $this->getDoctrine()->getRepository(reg::class);
         $users = $repository->findAll();
         return $this->render('userList/list.html.twig', [
             'users'=>$users
@@ -311,7 +311,7 @@ class UserController extends controller
     public function deleteAction($id)
     {
         $em = $this->getDoctrine()->getManager();
-        $user = $em->getRepository(User::class)->find($id);
+        $user = $em->getRepository(reg::class)->find($id);
         $em->remove($user);
         $em->flush();
         return $this->redirectToRoute('user_list');
@@ -323,7 +323,7 @@ class UserController extends controller
     public function overviewAction($id)
     {
         $em = $this->getDoctrine()->getManager();
-        $user = $em->getRepository(User::class)->find($id);
+        $user = $em->getRepository(reg::class)->find($id);
         $a = dump($user);
         return $this->render('/overview/overview.html.twig', [
             'id'=>$id,

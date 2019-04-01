@@ -21,7 +21,7 @@ class QuestionType extends AbstractType
 //            ]);
         ;
 
-        $builder->add('answer', AnswerType::class);
+//        $builder->add('answer', AnswerType::class);
 
     }
 

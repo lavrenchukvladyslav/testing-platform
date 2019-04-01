@@ -22,11 +22,11 @@ class Results
      */
     private $question;
 
-//    /**
-//     * @ORM\OneToOne(targetEntity="App\Entity\Answer", cascade={"persist", "remove"})
-//     * @ORM\JoinColumn(nullable=false)
-//     */
-//    private $resultAnswer;
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Answer", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $answer;
 
     /**
      * @ORM\Column(type="boolean")
